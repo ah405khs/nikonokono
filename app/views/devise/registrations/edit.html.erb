@@ -1,10 +1,15 @@
+<div class="container" style="margin-top: 4%;">
+  <div class="row">
+    <div class="col white offset-s2 s8 z-depth-3" style="padding: 0 !important;">
+  <div class="teal white-text center" style="padding: 2px 0; margin:0;">
 <h2>Edit <%= resource_name.to_s.humanize %></h2>
 
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
   <%= devise_error_messages! %>
-
+</div>
+<div style="padding: 0 10%;">
   <div class="field">
-    <%= f.label :email %><br />
+    <%= f.label :아이디%><br />
     <%= f.email_field :email, autofocus: true %>
   </div>
 
@@ -13,31 +18,38 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
+    <%= f.label :현재비밀번호 %> <i>(현재 비밀번호를 입력해 주세요 *필수)</i><br />
+    <%= f.password_field :current_password, autocomplete: "off" %>
+
+  </div>
+
+  <div class="field">
+    <%= f.label :비밀번호 %> <i>(바꾸고 싶지 않으면 빈 칸으로 남겨주세요)</i><br />
     <%= f.password_field :password, autocomplete: "off" %>
     <% if @minimum_password_length %>
       <br />
-      <em><%= @minimum_password_length %> characters minimum</em>
+      <em>최소 <%= @minimum_password_length %>자</em>
     <% end %>
   </div>
 
   <div class="field">
-    <%= f.label :password_confirmation %><br />
+    <%= f.label :비밀번호확인 %><br />
     <%= f.password_field :password_confirmation, autocomplete: "off" %>
   </div>
 
-  <div class="field">
-    <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
-    <%= f.password_field :current_password, autocomplete: "off" %>
-  </div>
-
   <div class="actions">
-    <%= f.submit "Update" %>
+    <%= f.submit "수정 완료", class: 'btn amber', style:"text-align:center; margin-top:15px; margin-bottom:15px; width: 100%; " %>
   </div>
 <% end %>
+</div>
+<div class="teal white-text center lighten-3" style="padding: 2px 0; margin:0;">
+<h3>계정 삭제</h3>
 
-<h3>Cancel my account</h3>
+<p>정말로 삭제하시겠습니까? <%= button_to "계정 삭제", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete, class: "btn"%></p>
 
-<p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete %></p>
-
+<ul>
 <%= link_to "Back", :back %>
+</ul>
+</div>
+</div>
+</div>
