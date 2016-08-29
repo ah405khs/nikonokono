@@ -2,6 +2,7 @@ body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
+    background-color: #e8eaf6;
   }
 
   main {
@@ -12,6 +13,48 @@ footer {
   font-size: 0.8em;
 }
 
+table {
+  margin: 0px  !important;
+  padding: 0px !important;
+}
+.video-background {
+    background: gray;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -99;
+    background: url(https://wallpaperscraft.com/image/road_night_lights_88183_225x300.jpg) no-repeat 50% fixed;
+    background-size: cover;
+}
+
+#home-index {
+  position: absolute;
+  float: left;
+  width: 100%;
+  margin-top: 100px;
+  height: auto;
+  background-color: #000;
+  opacity: 0.7;
+  text-align: center;
+}
+
+
+#home-index ul li {
+  margin: 0 200px;
+  display:inline-block;
+}
+
+#home-index ul li a:hover {
+  background-color: #e91e63;
+}
+.home-logo {
+  margin: 0 auto;
+
+}
 #c_map {
   background-color: #c097e6;
 }
