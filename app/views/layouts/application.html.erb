@@ -32,7 +32,7 @@
       </div>
       </li>
       <% if user_signed_in? %>
-        <li><%= current_user.email %></li>
+        <li><%= link_to current_user.email %></li>
         <li><%= link_to "로그아웃", destroy_user_session_path, method: :delete, data: { confirm: "Are you sure?" } %></li>
       <% else %>
         <li><%= link_to "로그인", new_user_session_path %></li>
