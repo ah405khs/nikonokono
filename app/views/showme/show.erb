@@ -44,18 +44,19 @@
 </div>
 </div>
   <!-- 제목,조회수 -->
-  <div class="container">
+  <div class="container white z-depth-3" style="padding: 2% 3%;">
   <div class="row">
     <div class="col s3">
-      <span>글번호 :</span> <%= @post.id %></p>
-      <span>제목 :</span> <%= @post.title %></p>
+      <h6 class="grey-text">글번호 : <%= @post.id %></h6>
+      <h5 class="amber-text" style="font-weight: bold;">제목 : <%= @post.title %></h5>
     </div>
-    <div class="col offset-s7 s2 center-align">
+    <div class="col offset-s7 s2 center-align" style="border-top:1px solid #777373;">
       <label>조회수: <span><%= @post.hit %> </span></label><br>
       <label> <%= time_ago_in_words(@post.created_at) %> 전 </label>
     </div>
   </div>
-
+<br>
+<br>
   <!-- 작성자,원곡가수,원곡명 -->
   <div class="row">
     <div class="col s2">
@@ -71,12 +72,9 @@
 
   <!-- 추천수 -->
   <div class="row">
-    <div class="col s7">
-     <i class="fa fa-heart" aria-hidden="true"></i> 추천수: <span><%= @post.reconum %></span> &emsp;
-    </div>
-    <div class="col offset-s3 s2 right">
+    <div class="col-offset-s8">
       <% if user_signed_in? %>
-       <%= link_to '수정', edit_path, class: "col s2" if @post.updatable_by? current_user %>&nbsp;
+       <%= link_to '수정', edit_path, class: "col offset-s9" if @post.updatable_by? current_user %>&nbsp;
        <%= link_to '삭제', destroy_path, class: "col s2", method: :delete, data: { confirm: 'Are you sure?' } if @post.deletable_by? current_user %>
       <% end %>
     </div>
@@ -85,13 +83,12 @@
   <!-- Youtube 부분 -->
 
 
-  <div id="iframetest" style="cursor: pointer;">iframe test </div>
   <% if @post.link_select == 'youtube' %>
-  <div class="row" id="goyoutube">
+  <div class="row" id="goyoutube" style="padding:0 3%;">
 
   </div>
   <% else %>
-  <div class="row" id="gosoundcloud">
+  <div class="row" id="gosoundcloud" style="padding:0 3%;">
 
   </div>
   <% end %>
@@ -99,11 +96,9 @@
   <!-- 추천을 위한 코드 -->
       <div class="row reco_btn">
         <div class="col offset-s5 s1 valign center-align">
-        <button>
-           <i class="fa fa-thumbs-up fa-2x" aria-hidden="true"></i>
+           <i class="fa fa-thumbs-up fa-2x" aria-hidden="true" style="cursor: pointer;"></i>
            <input id="reco_id" value="<%= @post.reconum %>" style="
            margin-bottom: 0px;border-bottom-width: 0px;width: 25px;height: 15px;" readonly="">
-        </button>
        </div>
      </div>
 
@@ -146,13 +141,12 @@
 
 <div class="form-group" style="margin-top:10px;">
   <input type="hidden" name="id_of_post">
-  <textarea class="form-control" name="reply_content" rows="5" id="content_<%= @post.id %>" placeholder="댓글을 입력하세요"></textarea>
+  <textarea class="form-control" name="reply_content" rows="5" id="content_<%= @post.id %>" placeholder="댓글을 입력하세요" style="resize:none;"></textarea>
 <!-- </div> -->
-
   <button value="<%= @post.id %>" type="submit" class="btn btn-default reply_submit"> 작성 </button>
   <%= link_to '뒤로가기', showme_index_path, class: 'btn btn-default' %>
 </div> <!-- container end %-->
-
+</div>
 <script>
 
 
@@ -181,10 +175,13 @@
       $(".reply_submit").click(function() {
 
         var post_id = this.value;
-        var post_email = '<%= current_user.email %>';
+        '<% if current_user %>';
+          var post_email = '<%= current_user.email %>';
+        '<% end %>';
         var post_content = $("#content_" + post_id).val();
 
 
+        '<% if current_user %>';
         $.ajax({
           method: "POST",
           url: "/showme/reply",
@@ -195,26 +192,30 @@
             console.log(msg);
             // 댓글 추가
             $("#reply_" + post_id).append(
-
                 '  <td>' +post_email +'</td>' +
                 '  <td>'+ post_content+'</td>' +
                 '  <td>	less than a minute 전</td>'+
                 '  <td>'+
+                '<% if @post.replies.all.size == 0 %>'+
+                '<%= link_to '[수정]', reply_edit_path(1)%>'+
+                '<%= link_to ' [삭제]', reply_destroy_path(1), method: :delete, data: { confirm: '글을 지우시겠습니까?' } %>'+
+                '<% else %>'+
                 '<%= link_to '[수정]', reply_edit_path(@post.replies.last.id+1)%>'+
                 '<%= link_to ' [삭제]', reply_destroy_path(@post.replies.last.id+1), method: :delete, data: { confirm: '글을 지우시겠습니까?' } %>'+
+                '<% end %>'+
                 '</td>'+
                 '</tr>'
               );
-            }
-
-            $("#content_" + post_id).val("");
-            alert("리플이 작성되었습니다." +'<%= @post.replies.last.id %>');
           },
           error: function(err) {
             console.log(err);
             alert("리플이 작성되지 않았습니다." + post_content + post_id + post_email);
           }
         });
+        '<% else %>';
+          alert("댓글을 다시려면 로그인하세요!");
+          window.location.href = "/users/sign_in";
+        '<% end %>';
       });
     });
 
@@ -228,36 +229,38 @@
       $.ajax({
         method: "GET",
         url: "/reconum/<%= @post.id %>",
-        data: { reconum: reco},
+        data: { reconum: reco },
 
         success: function() {
           var i = 0;
 
-          "<% Recommend.all.each do |r| %>"
-            "<% if r.post_id == @post.id %>"
-              "<% if r.email == current_user.email %>"
-                i = 1
+          "<% if current_user %> "
+            "<% Recommend.all.each do |r| %>"
+              "<% if r.post_id == @post.id %>"
+                "<% if r.email == current_user.email %>"
+                  i = 1
+                "<% end %>"
               "<% end %>"
             "<% end %>"
-          "<% end %>"
 
-          "<% if current_user.email == @post.user.email%>"
-            alert("자신의 글은 추천 불가");
-          "<% else %>"
-            if(i == 0){
-              $("#reco_id").val('<%= @post.reconum+1 %>');
-              alert("추천 성공");
-            }
-            else{
-              alert("이미 추천 하였습니다.");
-            }
+            "<% if current_user.email == @post.user.email %>"
+              alert("자신의 글은 추천 불가합니다.");
+            "<% else %>"
+              if(i == 0){
+                $("#reco_id").val('<%= @post.reconum+1 %>');
+                alert("추천 성공");
+              }
+              else{
+                alert("이미 추천 하였습니다.");
+              }
+            "<% end %>"
           "<% end %>"
 
 
         },
-        error: function() {
-
-          alert("실패");
+        error: function(err) {
+          alert("추천을 하시려면 로그인하세요.");
+          window.location.href = "/users/sign_in";
         }
       });
     });
