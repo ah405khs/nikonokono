@@ -1,0 +1,141 @@
+<div id="map"></div>
+<div id="console" style="width:500px; border:5px; font-size:20px"></div>
+
+<div id="content">
+  <% @infoHashArray.each do |i| %>
+    <%=i%> <br>
+  <% end %>
+</div>
+<!-- Modal Structure -->
+
+<div class="modal_infos">
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    showMap();
+  });
+  function showMap() {
+    var markers = [];
+    var infoWindows = [];
+    var modalArray = [];
+    var lat = '<%=@currentLat%>';
+    var lng = '<%=@currentLng%>';
+    console.log("In Javascript pos : "+lat +","+ lng);
+    // Map Setting
+    var mapOptions = {
+      center: new naver.maps.LatLng(lat, lng),
+      zoom: 12
+    };
+    var map = new naver.maps.Map('map', mapOptions);
+    // 현재 위치 표시
+    var currentMarkerOptions = {
+      position: new naver.maps.LatLng(lat, lng),
+      map : map,
+      icon: {
+        url: 'http://goo.gl/9iD6I0',
+        size: new naver.maps.Size(40, 36),
+        scaledSize: new naver.maps.Size(40, 35), // 레티나 대응
+        anchor: new naver.maps.Point(11, 35)
+      }
+    };
+    var currentMarker = new naver.maps.Marker(currentMarkerOptions);
+    // 검색 결과 루프
+    '<% @infoHashArray.each_with_index do |i, index| %>'
+      var pos = new naver.maps.LatLng('<%= i.as_json['lat'] %>', '<%= i.as_json['lng'] %>');
+      // console.log("lat : " + '<%= i.as_json['lat'] %>' + " , lon : " + '<%= i.as_json['lng'] %>');
+      // Marker
+      var markerOptions = {
+        position: pos,
+        map : map,
+        icon: {
+          url: 'http://goo.gl/hHqBsb',
+          size: new naver.maps.Size(40, 35),
+          scaledSize: new naver.maps.Size(40, 35), // 레티나 대응
+          anchor: new naver.maps.Point(11, 35)
+        }
+      };
+      var marker = new naver.maps.Marker(markerOptions);
+
+      // 정보
+      var title = "<%= i.as_json['title'] %>";
+      title = title.replace(/&lt;b&gt;/g, ' ').replace(/&lt;\/b&gt;/g, ' ');      //  title <b> tag 제거
+      var address = '<%= i.as_json['address'] %>';
+      var roadAddress = '<%= i.as_json['roadAddress'] %>'
+      var description = '<%= i.as_json['description'] %>'
+      description = description.replace(/&lt;b&gt;/g, ' ').replace(/&lt;\/b&gt;/g, ' ');      //  title <b> tag 제거
+      var telephone = '<%= i.as_json['telephone'] %>'
+      if (!description) {
+        description = "<span style='color:#FF0000'>등록된 설명이 없습니다.<span>";
+      }
+      if (!telephone) {
+        telephone = "<span style='color:#FF0000'>등록된 연락처가 없습니다.<span>";
+      }
+
+      var modal_id = 'modal' + '<%= index+1 %>';
+      function modal_trigger(s) {
+        var ss = s+1;
+        $('#modal'+ss).openModal();
+      }
+
+      var modalcontent = [
+        '<div class="modal" id="' + modal_id + '"style="max-height: 90%;  background-color: transparent;">',
+          '<div class="card card-hide"  style="background-color: transparent; display: block; margin: 0px; border-radius: 5px; box-shadow: 0px;">',
+            '<div class="teal">',
+            '<div class="card-title white-text">',
+            '<div class="row" margin:0;>',
+            '<div class="col s12" >',
+              '<span style="font-weight: bold; padding-left:10px;">' + title + '</span>',
+              '</div>',
+              '</div>',
+              '</div>',
+              '</div>',
+              '<div class="card-content teal lighten-5" style="margin-top:-20px;">',
+              '</div>',
+              '<div class="card-content indigo lighten-5" style="padding: 5px 10px; margin-top: 12px;">',
+              '<div class="row">',
+              '<div class="col s12">',
+              '<span><i class="material-icons green-text text-darken-1 cta-icon">phone</i> &nbsp;'+ telephone +' </span>',
+              '</div>',
+              '</div>',
+              '</div>',
+              '<div class="card-content white" style="padding: 5px 10px;">',
+              '</div>',
+              '<div class="card-content grey lighten-4 padding: 5px 10px;">',
+              '<div class="row">',
+              '<div class="col s12">',
+              '<p>주소 : ' + address + ' </p>',
+              '<p>도로명 주소 : '+ roadAddress +' </p>',
+              '<p>설명 : '+ description +' </p>',
+              '</div>',
+              '</div>',
+              '</div>',
+              '<div class="card-content teal lighten-5" style="padding: 20px 10px; margin-top:12px;">',
+              '</div>',
+              '<div class="card-content teal" style="padding-bottom: 6px;">',
+                '<div class="row" style="width:100%; margin:0;"><div class="col-end"><a href="#" class="right modal-close"><i class="material-icons text_amber">done</i></a></div></div>',
+              '</div>',
+          '</div>',
+          '</div>'
+      ].join('');
+      // 배열에 추가
+      markers.push(marker);
+      modalArray.push(modalcontent);
+    '<% end %>'
+    //해당 마커의 인덱스를 seq라는 클로저 변수로 저장하는 이벤트 핸들러를 반환.
+    function getClickHandler(seq) {
+        return function(e) {
+            var marker = markers[seq],
+                modalcontent = modalArray[seq];
+                console.log(modalcontent);
+                $('.modal_infos').append(modalcontent);
+                modal_trigger(seq);
+        }
+    }
+    // 배열들에 담긴 Markers와 InfoWindows에게 핸들러를 세팅
+    for (var i=0, ii=markers.length; i<ii; i++) {
+        //naver.maps.Event.addListener(markers[i], 'click', getClickHandler(i));
+        naver.maps.Event.addListener(markers[i], "mousedown", getClickHandler(i));
+    }
+  }
+</script>

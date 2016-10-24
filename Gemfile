@@ -1,7 +1,14 @@
 source 'https://rubygems.org'
 
+gem 'will_paginate'  # 페이징 기능
+
+gem 'devise'
+gem 'rolify'
+gem 'authority'
+
 gem 'envyable'
 # gem 'soundcloud'
+gem 'json'
 
 gem 'font-awesome-sass'
 gem 'material_icons'
@@ -40,7 +47,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug'
+  gem 'pry-byebug', platform: [:ruby_20]
 end
 
 group :development do

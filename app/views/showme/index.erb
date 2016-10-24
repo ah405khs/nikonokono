@@ -1,0 +1,82 @@
+<div class="container">
+  <div class="row">
+    <div class="card col s3">
+    <div class="card-image waves-effect waves-block waves-light">
+      <img class="activator" src="images/office.jpg">
+    </div>
+    <div class="card-content">
+      <span class="card-title activator grey-text text-darken-4">Card Title<i class="material-icons right">more_vert</i></span>
+      <p><a href="#">This is a link</a></p>
+    </div>
+    <div class="card-reveal">
+      <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
+      <p>Here is some more information about this product that is only revealed once clicked on.</p>
+    </div>
+  </div>
+
+  <div class="card col s5">
+  <div class="card-image waves-effect waves-block waves-light">
+    <img class="activator" src="images/office.jpg">
+  </div>
+  <div class="card-content">
+    <span class="card-title activator grey-text text-darken-4">Card Title<i class="material-icons right">more_vert</i></span>
+    <p><a href="#">This is a link</a></p>
+  </div>
+  <div class="card-reveal">
+    <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
+    <p>Here is some more information about this product that is only revealed once clicked on.</p>
+  </div>
+  </div>
+
+  <div class="card col s4">
+  <div class="card-image waves-effect waves-block waves-light">
+    <img class="activator" src="images/office.jpg">
+  </div>
+  <div class="card-content">
+    <span class="card-title activator grey-text text-darken-4">Card Title<i class="material-icons right">more_vert</i></span>
+    <p><a href="#">This is a link</a></p>
+  </div>
+  <div class="card-reveal">
+    <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
+    <p>Here is some more information about this product that is only revealed once clicked on.</p>
+  </div>
+  </div>
+</div>
+<ul class="collection">
+  <% @posts.each do |post| %>
+  <a href="<%= post.id %>">
+    <li class="collection-item avatar">
+      <div class="row">
+        <div class="col s1">
+      <img src="http://img.youtube.com/vi/<%= post.ytb_key %>/default.jpg" alt="http://img.youtube.com/vi/<%= post.ytb_key %>/default.jpg" class="go-center">
+    </div>
+      <div class="col s7">
+      <span class="title"><%= post.title %></span>
+      <p>
+        작성자: <%= post.user.present? ? post.user.email : "null" %> <br>
+         <%= post.singer %>  <%= post.song %>
+      </p>
+    </div>
+    <div class="col s2 center">
+      조회수 : <%= post.hit %>
+      <br>
+      <br>
+      <i class="fa fa-heart-o" aria-hidden="true"></i> <%= post.reconum %>
+    </div>
+    <div class="col s1 offset-s1">
+      <a href="#!" class="secondary-content"><%= time_ago_in_words(post.created_at) %> ago</a>
+    </div>
+
+    </div>
+    </li>
+  </a>
+  <% end %>
+  </ul>
+     <a href="/showme/new" class="right"><button class="btn">글쓰기</button></a>
+  <div class="pagination center-align active">
+  <%= will_paginate @posts, previous_label: '<i class="material-icons">chevron_left</i>', next_label: '<i class="material-icons">chevron_right</i>' %>
+</div>
+  <!-- 글 리스트 번호 목록 -->
+
+
+</div>
